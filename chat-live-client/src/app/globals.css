@@ -1,0 +1,650 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Variables para Dark Mode (modo predeterminado) */
+:root {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-chat: #2c2c2c;
+  --text-primary: #ffffff;
+  --text-secondary: #e0e0e0;
+  --message-sent: #e5e5e5;
+  --message-sent-text: #000000; /* Texto en mensajes enviados */
+  --message-received: #3a3a3a;
+  --replied-sent: #bdbdbd; /* Más oscuro que el enviado */
+  --replied-received: #5a5a5a; /* Más claro que el recibido */
+  --border-color: #3a3a3a;
+  --notification-color: #ff3b30;
+  --bg-hover: #f7fafc;
+  --button-color: #6a0dad;
+}
+
+/* Variables para Light Mode */
+.light-mode {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #ffffff;
+  --bg-chat: #e0e0e0;
+  --text-primary: #000000;
+  --text-secondary: #3a3a3a;
+  --message-sent: #ffffff; /* Blanco para los mensajes enviados */
+  --message-sent-text: #000000; /* Texto en mensajes enviados */
+  --message-received: #d1d1d1;
+  --replied-sent: #f0f0f0; /* Un gris suave */
+  --replied-received: #b0b0b0; /* Más oscuro que el recibido */
+  --border-color: #d1d1d1;
+  --button-color: #000000;
+  --notification-color: #ff3b30;
+  --bg-hover: #000000;
+}
+
+.modal{
+  --bs-modal-width: 700px;
+}
+
+
+body {
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+}
+
+svg{
+  font-size: 200%;
+}
+
+.custom-error {
+  font-size: 0.875rem; /* Tamaño de fuente pequeño */
+  font-weight: 500;    /* Peso de fuente medio */
+  margin-top: 0.25rem; /* Espacio superior */
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
+/* Bloque principal del chat */
+.chat {
+  height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  /* width: 400px; */
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: Arial, sans-serif;
+}
+
+/* Header del chat */
+.chat__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  padding: 20px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.chat__title {
+  display: flex;
+  align-items: center;
+  padding-left: 0.5rem;
+  margin: 0;
+  font-size: 18px;
+}
+
+/* Contenedor de mensajes */
+.chat__messages {
+  padding: 10px 3rem;
+  overflow-y: auto;
+  background-color: var(--bg-chat);
+  height: 100%;
+}
+
+/* Mensajes recibidos */
+.chat__message--received .chat__text {
+  background-color: var(--message-received);
+  color: var(--text-secondary);
+  padding: 4px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  width: fit-content;
+}
+
+/* Mensajes enviados */
+.chat__message--sent {
+  text-align: right;
+}
+
+.chat__message--sent .chat__text {
+  background-color: var(--message-sent);
+  color: var(--message-sent-text);
+  padding: 4px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  width: fit-content;
+  margin-left: auto;
+}
+
+.chat__replied-message {
+  padding: 5px;
+  border-left: 4px solid var(--replied-border);;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: var(--replied-text);
+  background-color: var(--replied-bg);
+}
+
+/* Aplicar colores dinámicos según si el mensaje es enviado o recibido */
+.chat__message--sent .chat__replied-message {
+  --replied-bg: var(--replied-sent);
+  --replied-border: #999;
+  --replied-text: #333;
+}
+
+.chat__message--received .chat__replied-message {
+  --replied-bg: var(--replied-received);
+  --replied-border: #777;
+  --replied-text: #f0f0f0;
+}
+
+.chat__message--highlighted {
+  background-color: var(--replied-received) !important; /* Gris claro */
+  transition: background-color 1s ease-out; /* Desaparece gradualmente */
+}
+
+
+.chat__replied-close:hover {
+  @apply text-gray-500;
+}
+
+.chat__replied{
+  padding: 0rem 1rem;
+  display: flex;
+  cursor: pointer;
+  background-color: var(--bg-chat);
+}
+
+.chat__replied-text {
+  margin: 0;
+  font-style: italic;
+}
+
+/* Área de entrada de mensajes */
+.chat__input {
+  display: flex;
+  background-color: var(--bg-secondary);
+  border-top: 1px solid #ccc;
+  padding: 10px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.chat__field {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: var(--bg-chat);
+  color: var(--text-primary) !important;
+}
+
+.chat__send-button {
+  background-color: var(--button-color);
+  color: white; 
+  border: none;
+  padding: 8px 12px;
+  margin-left: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.chat__send-button:hover {
+  opacity: 0.8;
+}
+
+.form-control:focus {
+  color: var(--bs-body-color);
+  background-color: inherit;
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 .25rem #0e1a2b40;
+}
+
+
+/* Contenedor del menú lateral */
+.chat__sidebar {
+  background-color: var(--bg-secondary);
+  border-right: 1px solid #ccc;
+  height: 100vh !important;
+  position: relative;
+  padding: 10px;
+}
+
+/* Título del menú lateral */
+.chat__sidebar-title {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Lista de usuarios o chats activos */
+.chat__list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Imagen del usuario */
+.chat__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+/* Nombre del usuario */
+.chat__username {
+  font-size: 14px;
+}
+
+/* Elemento individual de la lista */
+.chat__list-item {
+  margin-bottom: 5px;
+}
+
+/* Enlace dentro de cada elemento de la lista */
+.chat__link {
+  padding: 8px;
+  border-radius: 5px;
+}
+
+/* Estado activo o seleccionado */
+.chat__list-item--active .chat__link,
+.chat__link:hover {
+  background-color: #ccc; /* Azul de fondo al seleccionar */
+  color: #fff; /* Texto blanco para contraste */
+}
+
+
+.chat-list {
+  @apply w-full max-w-md rounded-lg shadow-md overflow-hidden;
+}
+
+.chat-list__item {
+  @apply flex justify-between items-center p-4 cursor-pointer mt-1 mb-1;
+  position: relative;
+  background-color: var(--bg-primary);
+}
+
+.chat-list__item:hover{
+  @apply text-gray-500 ;
+   background-color: var(--bg-hover);
+}
+
+.chat-list__item-info {
+  @apply flex-1;
+  width: 65%;
+}
+
+.chat-list__item-name {
+  @apply block ;
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  overflow: hidden; /* Oculta el texto que no cabe */
+  text-overflow: ellipsis; /* Muestra los puntos suspensivos */
+}
+
+.chat-list__item-preview {
+  @apply text-xs text-gray-500 truncate;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-list__item-time {
+  @apply text-gray-400;
+  text-align: end;
+  font-size: x-small;
+}
+
+/* Lista de usuarios activos */
+.chat__user-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Elemento individual de la lista */
+.chat__user-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+/* Avatar del usuario */
+.chat__user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+/* Enlace del usuario */
+.chat__user-link {
+  padding-left: inherit;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: normal;
+  flex-grow: 1;
+}
+
+/* Botón de estado (activo/inactivo) */
+.chat__status-toggle {
+  color: #218838;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+/* Estado activo */
+.chat__status-toggle--active {
+  /*background-color: #28a745; /* Verde para activo */
+}
+
+/* Efecto hover en el botón */
+.chat__status-toggle:hover {
+  /*background-color: #218838; /* Verde más oscuro al pasar el cursor */
+  color: white;
+}
+
+/* Efecto hover en el elemento de la lista */
+.chat__user-item:hover {
+  background-color: #e1e1e1; /* Gris claro al pasar el cursor */
+}
+
+/* Estado activo o seleccionado */
+.chat__user-item--active {
+  background-color: #e1ffc7; /* Verde claro para el usuario activo */
+}
+
+/* Botón de enviar mensaje */
+.chat__message-button {
+  color: #218838;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.chat-list__item-unread {
+  /* position: absolute; */
+  width: min-content;
+  top: 10px;
+  right: 10px;
+  background-color: red;
+  color: white;
+  padding: 1px 6px;
+  border-radius: 50%;
+  margin: 5px;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.unread-badge {
+  font-weight: bold;
+}
+
+/* Estado de los mensajes enviados */
+.chat__status {
+  font-size: 12px;
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* Texto de "Enviado" */
+.chat__status-text {
+  color: var(--text-secondary);
+  font-style: italic;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Iconos de estado dentro del mensaje */
+.chat__status-icon {
+  float: right; /* Hace que el icono flote a la derecha */
+  margin-left: 8px; /* Espacio entre el texto y el icono */
+  font-size: 14px; /* Tamaño del icono */
+  margin-top: -13px;
+}
+
+.chat__status-icon.sent, .chat__status-icon.delivered {
+  color: var(--message-received);
+}
+
+/* Dos palomitas azules de "Visto" */
+.chat__status-icon.seen {
+  color: #20f704;
+}
+
+/* Estilos del spinner */
+.chat__status .spinner-border {
+  width: 12px;
+  height: 12px;
+  border-width: 2px;
+  color: var(--text-secondary);
+}
+
+
+/* Estilos para el menú deslizante */
+.bm-menu {
+  background: var(--bg-secondary);;
+  font-size: 1.15em;
+}
+
+.bm-menu  .search-container{
+  width: 80%;
+  margin: auto;
+}
+
+.bm-burger-button {
+  position: absolute;
+  width: 36px;
+  height: 30px;
+  right: 36px;
+  top: 25px;
+}
+
+.bm-burger-bars {
+  background: #373a47;
+}
+
+.bm-cross-button {
+  height: 24px;
+  width: 24px;
+}
+
+.bm-cross {
+  background: #bdc3c7;
+}
+
+.bm-item-list {
+  color: #b8b7ad;
+}
+
+.bm-item {
+  display: inline-block;
+  text-decoration: none;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
+
+.bm-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.bm-menu-wrap{
+  top: 0px;
+  /* width: inherit !important; */
+}
+
+.search-container{
+  background-color: var(--bg-chat);
+  border-radius: 10px;
+}
+
+.search__list > li:hover{
+   background-color: var(--bg-primary);
+}
+
+.search-input:focus {
+  outline: none; /* Elimina el borde de enfoque predeterminado */
+  box-shadow: none; /* Elimina cualquier sombra predeterminada */
+  border-color: initial; /* Restablece el color del borde al original */
+}
+
+.modal-content{
+  background-color: var(--bg-secondary) !important;
+  width: calc(100% + 7rem);
+  --tw-shadow: 0 20px 25px -5px #0000001a, 0 8px 10px -6px #0000001a;
+  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.modal-header{
+  border-bottom: var(--bs-modal-header-border-width) solid var(--bg-primary);
+}
+
+.modal-title {
+  margin: auto !important;
+}
+
+.form-check-input{
+  border-color: var(--text-primary);
+}
+
+.modal-footer{
+  border-top: initial;
+}
+
+.modal-footer > button:first-of-type{
+  background-color: var(--bg-secondary);
+}
+
+.modal-footer > button:first-of-type:hover{
+  background-color: var(--bg-primary);
+}
+
+.bm-overlay {
+  max-width: fit-content;
+}
+
+.btn-close{
+  background-color: aliceblue;
+}
+
+.date-separator {
+  text-align: center;
+  color: gray;
+  font-size: 12px;
+  margin: 10px 0;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+.data-\[state\=checked\]\:bg-primary[data-state="checked"]{
+  background-color: var(--button-color) !important;
+}
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.hover:hover{
+  color: var(--button-color);
+}
+
+.spinner-border, .spinner-grow {
+  width: 1rem;
+  height: 1rem;
+}
+
+
+
+

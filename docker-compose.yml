@@ -1,0 +1,55 @@
+services:
+  backend:
+    container_name: chat-live-back-container
+    image: chat-live-back-image
+    build:
+      context: ./api
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./api/.env
+    depends_on:
+      - database
+    networks:
+      - chat_network
+
+  client:
+    container_name: chat-live-client-container
+    image: chat-live-client-image
+    build:
+      context: ./chat-live-client
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./chat-live-client/.env
+    networks:
+      - chat_network
+
+  database:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: chat_live
+    ports:
+      - "5432:5432"
+    networks:
+      - chat_network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - client
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - chat_network
+
+networks:
+  chat_network:
+    driver: bridge

@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  backend:
+    container_name: chat-live-back-container
+    image: chat-live-back-image
+    build: .
+    ports:
+      - "8200:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - database
+
+  database:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: chat_live
+    ports:
+      - "5432:5432"

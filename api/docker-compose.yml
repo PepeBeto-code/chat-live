@@ -1,0 +1,25 @@
+services:
+  backend:
+    container_name: chat-live-back-container
+    image: chat-live-back-image
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - VAPID_PUBLIC_KEY=BDuTZCoemnY3xTmyzusOpeBf9YZ6OlAKnVcpv4iIa-HG5YcaPydrUDOm0XX0y_Zs03HogfYP8UmgcnmPPtPc-Bw
+      - VAPID_PRIVATE_KEY=1Ihxbl0x_uxAIGkc65kddh4jyjhxkfzoHH5GHnCk4d0
+      - DATABASE_URL=jdbc:postgresql://database:5432/chat_live
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=root
+    depends_on:
+      - database
+
+  database:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: chat_live
+    ports:
+      - "5432:5432"
