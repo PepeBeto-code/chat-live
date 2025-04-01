@@ -123,10 +123,9 @@ docker-compose down --rmi all -v --remove-orphans
 
    ## Capturas
 
-![Diagrama Relacional](docs/imagenes/ChatLogin.png)
-![Diagrama Relacional](docs/imagenes/ChatRegister.png)
-![Diagrama Relacional](docs/imagenes/Chat1.png)
-![Diagrama Relacional](docs/imagenes/Chat3.png)
-![Diagrama Relacional](docs/imagenes/Chat5.png)
-![Diagrama Relacional](docs/imagenes/Chat6.png)
-![Diagrama Relacional](docs/imagenes/Chat7.png)
+![Login](docs/imagenes/ChatLogin.png)
+![Register](docs/imagenes/ChatRegister.png)
+![Image 1](docs/imagenes/Chat1.png)
+![imagen 2](docs/imagenes/Chat3.png)
+![Imagen 3](docs/imagenes/Chat5.png)
+![Imagen 4](docs/imagenes/Chat6.png)
