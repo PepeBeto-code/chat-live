@@ -49,6 +49,4 @@ public class UserController {
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
-
-    // Otros endpoints según sea necesario
 }

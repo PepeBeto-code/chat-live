@@ -21,7 +21,8 @@ public class RegisterRequest {
     String firstname;
     String lastname;
     String telephone;
+    /*
     @NotNull(message = "El código de invitación es obligatorio.")
     @ValidInvitationCode(message = "El código de invitación es inválido o ha expirado.")
-    private String invitationCode;
+    private String invitationCode;*/
 }

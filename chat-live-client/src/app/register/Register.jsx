@@ -8,14 +8,17 @@ import { getCookie } from "@/utils/cookies";
 import Swal from "sweetalert2";
 
 const Register = () => {
+  // Estado para almacenar los datos del formulario
   const [userData, setUserData] = useState({});
+
+  // Estados para manejar errores globales y específicos por campo
   const [error, setError] = useState("");
   const [errors, setErrors] = useState({});
 
   const router = useRouter();
 
+  // Verifica si ya existe un token (usuario logueado) y redirige si es necesario
   const token = getCookie("token");
-
   useEffect(() => {
     if (token) {
       router.replace("/dashboard/home"); // ⚡ Redirigir solo después del primer render
@@ -23,6 +26,8 @@ const Register = () => {
   }, [token]); // Se ejecuta solo cuando cambia `tokenDate`
 
   const { login } = DataHooks();
+
+  // Maneja los cambios en los inputs del formulario
   const onChange = (e) => {
     setUserData({
       ...userData,
@@ -30,6 +35,7 @@ const Register = () => {
     });
   };
 
+  // Envía los datos del formulario y realiza validaciones básicas del lado del cliente
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -39,8 +45,8 @@ const Register = () => {
     if (
       !userData.username ||
       !userData.password ||
-      !userData.confirmPassword ||
-      !userData.invitationCode
+      !userData.confirmPassword
+      // !userData.invitationCode
     ) {
       setError("Todos los campos son obligatorios.");
       return;
@@ -77,7 +83,10 @@ const Register = () => {
           Crear Cuenta
         </h2>
         {error && (
-          <div className="p-3 text-center text-red-600 border border-red-600 rounded">
+          <div
+            role="alert"
+            className="p-3 text-center text-red-600 border border-red-600 rounded"
+          >
             {error}
           </div>
         )}
@@ -95,11 +104,15 @@ const Register = () => {
               type="text"
               required
               onChange={onChange}
+              aria-invalid={!!errors.username}
+              aria-errormessage={errors.username ? "username-error" : undefined}
               className="mt-1 block w-full  text-black px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Tu nombre"
             />
             {errors.username && (
-              <h6 className={"custom-error text-danger"}>{errors.username}</h6>
+              <h6 id="username-error" className={"custom-error text-danger"}>
+                {errors.username}
+              </h6>
             )}
           </div>
 
@@ -129,13 +142,17 @@ const Register = () => {
               id="password"
               name="password"
               type="password"
+              aria-invalid={!!errors.password}
+              aria-errormessage={errors.password ? "password-error" : undefined}
               required
               onChange={onChange}
               className="mt-1 block  text-black w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="********"
             />
             {errors.password && (
-              <h6 className={"custom-error text-danger"}>{errors.password}</h6>
+              <h6 id="password-error" className={"custom-error text-danger"}>
+                {errors.password}
+              </h6>
             )}
           </div>
 
@@ -157,7 +174,7 @@ const Register = () => {
             />
           </div>
 
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label
               htmlFor="confirmPassword"
               className="block text-sm font-medium text-gray-700"
@@ -178,7 +195,7 @@ const Register = () => {
                 {errors.invitationCode}
               </h6>
             )}
-          </div>
+          </div> */}
 
           <div>
             <button

@@ -37,6 +37,4 @@ public class ChatController {
     public ChatResponseDto getChat(@PathVariable Long id ) {
         return chatService.getChatById(id);
     }
-
-    // Otros endpoints según sea necesario
 }

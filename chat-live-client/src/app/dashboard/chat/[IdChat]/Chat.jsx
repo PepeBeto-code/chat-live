@@ -19,8 +19,11 @@ import { Tooltip } from "reactstrap";
 import InfoChat from "@/components/InfoChat";
 import UserAvatar2 from "@/components/UserAvatar2";
 import { Info } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const Chat = () => {
+  // Contexto de autenticación (WebSocket, conexión, chats, typing, etc.)
   const {
     client,
     connected,
@@ -29,15 +32,26 @@ const Chat = () => {
     setTypingChats,
     typingChats,
     connectedRef,
+    setOpenMenu,
+    openMenu,
   } = useAuth();
+
+  // Estado del usuario logueado y token desde Redux
   const useLoguer = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
+
+  // Obtención del chatId desde la URL
   const paths = usePathname().split("/");
   const pathname = paths.pop();
   const chatId = Number(pathname);
+
+  // Tooltips de íconos
   const [tooltipOpenMenu, setTooltipOpenMenu] = useState(false);
   const [tooltipOpenSearch, setTooltipOpenSearch] = useState(false);
+
   const dispatch = useDispatch();
+
+  // Hook principal que maneja la lógica del chat
   const {
     messages,
     setMessages,
@@ -66,6 +80,7 @@ const Chat = () => {
     connectedRef
   );
 
+  // Subscripción al WebSocket para eventos en tiempo real
   useChatSuscribe(
     chatId,
     setMessages,
@@ -74,21 +89,27 @@ const Chat = () => {
     typingChats
   );
 
+  // Estado para manejar visualización de un mensaje individual
   const [selectMessage, setSelectMessage] = useState(null);
   const [selectMessageDmIsVisible, setSelectMessageDmIsVisible] =
     useState(true);
 
-  // Agregado para el control del menu
+  // Estado y referencia del menú lateral
   const menf = useRef(null);
   const [isSearch, setIsSearch] = useState(false);
   const [isInfoChat, setIsInfoChat] = useState(false);
   const [isInfo, setIsInfo] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Actualiza estado del menú cuando se abre/cierra
   const handleStateChange = (state) => {
     setIsMenuOpen(state.isOpen);
   };
+
+  // Cierra menú si se hace clic fuera
   useClickOutside(menf, () => setIsMenuOpen(false)); // Se cerrará si se hace clic fuera
 
+  // Abre el panel lateral con información del mensaje
   const infoMessage = (msg) => {
     setIsSearch(false);
     setIsInfoChat(false);
@@ -97,12 +118,14 @@ const Chat = () => {
     setIsMenuOpen(true);
   };
 
+  // Si no hay usuario logueado, no renderiza
   if (!useLoguer) return;
 
   let lastTimestamp = null;
 
   return (
     <div id="outer-container">
+      {/* Menú lateral derecho */}
       <div ref={menf}>
         <Menu
           pageWrapId={"page-wrap"}
@@ -119,6 +142,7 @@ const Chat = () => {
             {isInfoChat && "Info. del chat"}
           </h2>
           <div>
+            {/* Componentes condicionales del panel lateral */}
             {isSearch && (
               <ChatMessageSearch
                 messages={messages}
@@ -163,6 +187,7 @@ const Chat = () => {
                   />
                 </div>
 
+                {/* Info de estados: visto / entregado */}
                 <div className="p-4 shadow-xl">
                   <div
                     className="p-2"
@@ -218,19 +243,29 @@ const Chat = () => {
           </div>
         </Menu>
       </div>
+
+      {/* Contenido principal del chat */}
       <div id="page-wrap" className="mx-auto shadow rounded-lg chat">
+        {/* Encabezado del chat */}
         <div className="chat__header">
-          <div className="flex">
-            {" "}
-            {participant && (
-              <UserAvatar2
-                isConnected={participant?.active}
-                name={participant?.username}
-                idUser={participant?.id}
-                showInitials={true}
-              />
-            )}
-            {chat && <h1 className="chat__title">{chat.name}</h1>}
+          <div className="flex items-center">
+            <FontAwesomeIcon
+              className="cursor-pointer mr-4 text-lg md:hidden"
+              icon={faArrowLeft}
+              onClick={() => setOpenMenu(true)}
+            />
+            <div className="flex">
+              {" "}
+              {participant && (
+                <UserAvatar2
+                  isConnected={participant?.active}
+                  name={participant?.username}
+                  idUser={participant?.id}
+                  showInitials={true}
+                />
+              )}
+              {chat && <h1 className="chat__title">{chat.name}</h1>}
+            </div>
           </div>
           <div className="flex">
             <div
@@ -274,6 +309,7 @@ const Chat = () => {
           </div>
         </div>
 
+        {/* Lista de mensajes */}
         <div className="chat__messages">
           {messages.map((msg, index) => {
             const repliedMessage = msg.repliedMessageId

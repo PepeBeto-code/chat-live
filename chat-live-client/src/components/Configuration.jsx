@@ -46,7 +46,7 @@ export default function Configuration() {
         active: isOnline,
       });
       toast.success(`Estado Actualizado`, {
-        reverseOrder: true, // Nuevas notificaciones aparecerán encima de las anteriores
+        reverseOrder: true,
         position: "top-left",
       });
       setIsOnline(isOnline);
@@ -91,7 +91,7 @@ export default function Configuration() {
     }
   };
 
-  // Función para actualizar el nombre (puedes adaptarlo a Redux)
+  // Función para actualizar el nombre
   const handleSaveName = () => {
     setErrors({});
 

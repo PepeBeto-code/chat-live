@@ -98,7 +98,7 @@ svg{
 
 /* Contenedor de mensajes */
 .chat__messages {
-  padding: 10px 3rem;
+  padding: 10px 2rem;
   overflow-y: auto;
   background-color: var(--bg-chat);
   height: 100%;

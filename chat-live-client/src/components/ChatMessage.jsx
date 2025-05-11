@@ -21,6 +21,11 @@ import {
 import { useEffect, useState } from "react";
 import DataHooks from "@/functions/DataHooks";
 
+/**
+ * Componente ChatMessage - Renderiza un solo mensaje del chat
+ * con soporte para responder, editar, eliminar (para mí o todos),
+ * mostrar estado del mensaje y mensajes destacados.
+ */
 const ChatMessage = ({
   msg,
   repliedMessage,
@@ -50,6 +55,10 @@ const ChatMessage = ({
   const { setIsLoading, connectedRef } = useAuth();
   const { fetcherDeleted, fetcherPut } = DataHooks(dispatch, connectedRef);
 
+  /**
+   * Abre el modal para confirmar la eliminación del mensaje.
+   * Permite elegir si eliminar solo para el usuario o para todos.
+   */
   const toggleModal = (canDeleteForAll, msg) => {
     setDeleteForAll(canDeleteForAll && isEditable); // Si el mensaje es del usuario, permitir eliminar para todos
     setDeletedAll(canDeleteForAll && isEditable);
@@ -57,6 +66,9 @@ const ChatMessage = ({
     setModal(!modal);
   };
 
+  /**
+   * Elimina un mensaje usando la API.
+   */
   const deletedMessage = async () => {
     setIsLoading(true);
     try {
@@ -74,7 +86,7 @@ const ChatMessage = ({
       );
       setSelectMessage(null);
       toast.success(`Mensaje eliminado`, {
-        reverseOrder: true, // Nuevas notificaciones aparecerán encima de las anteriores
+        reverseOrder: true,
         position: "top-left",
       });
       console.log("Mensaje eliminado con exito");
@@ -85,6 +97,9 @@ const ChatMessage = ({
     }
   };
 
+  /**
+   * Edita el contenido del mensaje si ha sido modificado.
+   */
   const editMessage = async () => {
     try {
       if (editedContent == msg.content) {
@@ -119,6 +134,10 @@ const ChatMessage = ({
     }
   };
 
+  /**
+   * Determina si el mensaje aún puede editarse.
+   * Si pasaron más de 5 minutos desde su envío, se bloquea la edición.
+   */
   useEffect(() => {
     const timeElapsed =
       new Date().getTime() - new Date(msg.timestamp).getTime();
@@ -181,7 +200,7 @@ const ChatMessage = ({
           ) : null}
         </div>
       )}
-
+      {/* Modal de eliminación de mensaje */}
       <Modal isOpen={modal} toggle={toggle} centered>
         <ModalHeader toggle={toggle} className="font-bold text-xl">
           {deleteForAll
@@ -256,6 +275,9 @@ const ChatMessage = ({
   );
 };
 
+/**
+ * Muestra el mensaje al que se está respondiendo.
+ */
 const RepliedMessage = ({
   repliedMessage,
   useLoguer,
@@ -275,6 +297,9 @@ const RepliedMessage = ({
   </div>
 );
 
+/**
+ * Contenido del mensaje con posibilidad de edición, respuesta y eliminación.
+ */
 const MessageContent = ({
   msg,
   isSentByUser,
@@ -380,6 +405,10 @@ const MessageContent = ({
   </>
 );
 
+/**
+ * Renderiza el estado del mensaje (enviado, recibido, visto)
+ * y la fecha correspondiente.
+ */
 const MessageStatus = ({ msg, isSentByUser, hiddenStatuses }) => (
   <span
     className={`chat__status-icon ${
@@ -395,6 +424,7 @@ const MessageStatus = ({ msg, isSentByUser, hiddenStatuses }) => (
   </span>
 );
 
+// Mapeo de estados a clases CSS
 const getStatusClass = (status) => {
   switch (status) {
     case "SENT":
@@ -408,6 +438,7 @@ const getStatusClass = (status) => {
   }
 };
 
+// Devuelve la fecha correspondiente al estado del mensaje
 const getStatusDate = (msg) => {
   switch (msg.status) {
     case "SENT":
@@ -421,6 +452,7 @@ const getStatusDate = (msg) => {
   }
 };
 
+// Devuelve el símbolo visual del estado del mensaje
 const getStatusSymbol = (status) => {
   switch (status) {
     case "SENT":

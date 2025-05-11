@@ -1,54 +1,80 @@
-'use client'
+"use client";
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { ArchiveRestore, MoveLeft  } from "lucide-react";
-import ChatsListItem from './ChatsListItem';
-import ChatSearch from './ChatSearch';
-import { MessageCircleX } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { ArchiveRestore, MoveLeft } from "lucide-react";
+import ChatsListItem from "./ChatsListItem";
+import ChatSearch from "./ChatSearch";
+import { MessageCircleX } from "lucide-react";
 
+/**
+ * Componente ChatsList
+ * Renderiza la lista de chats del usuario, incluyendo:
+ * - Chats visibles y no archivados
+ * - Chats archivados
+ * - Barra de búsqueda de chats
+ * - Alternancia entre chats activos y archivados
+ */
 function ChatsList() {
-  const { chats = []} = useAuth();
-  const [view, setView] = useState(true);
-  const [isVisible, setIsVisible] = useState(true);
-  const { chatsVisible, chatsArchived } = useMemo(() => ({
-    chatsVisible: chats.filter(c => c.visible && !c.archived),
-    chatsArchived: chats.filter(c => c.archived),
-  }), [chats]);
+  const { chats = [] } = useAuth();
+  const [view, setView] = useState(true); // true: ver chats visibles, false: ver archivados
+  const [isVisible, setIsVisible] = useState(true); // Controla si se muestra el contenido de la lista
 
+  /**
+   * Separar los chats en visibles y archivados usando useMemo
+   * Se recalcula solo cuando 'chats' cambia.
+   */
+  const { chatsVisible, chatsArchived } = useMemo(
+    () => ({
+      chatsVisible: chats.filter((c) => c.visible && !c.archived),
+      chatsArchived: chats.filter((c) => c.archived),
+    }),
+    [chats]
+  );
+
+  /**
+   * Siempre que no haya chats archivados, se forza la vista de chats visibles.
+   */
   useEffect(() => {
     if (chatsArchived.length === 0) setView(true);
   }, [chatsArchived]);
 
   return (
     <div className="chat-list mt-2 h-full">
-      <div className='mb-2 mt-3'>
+      {/* Componente de búsqueda de chats */}
+      <div className="mb-2 mt-3">
         <ChatSearch chats={chats} setIsVisible={setIsVisible}></ChatSearch>
       </div>
-      {
-        isVisible && 
+
+      {/* Renderizado condicional de la lista de chats según la visibilidad */}
+      {isVisible && (
         <div>
-          { 
-          chatsArchived.length > 0 &&
-            <div className="chat-list__item bg-transparent !justify-start"
-                onClick={() => setView(!view)}>
-            {view ? <ArchiveRestore /> : <MoveLeft />}
-            <span className='pl-4'>Chats Archivados</span>
+          {/* Botón para alternar entre chats visibles y archivados (si hay archivados) */}
+          {chatsArchived.length > 0 && (
+            <div
+              className="chat-list__item bg-transparent !justify-start"
+              onClick={() => setView(!view)}
+            >
+              {view ? <ArchiveRestore /> : <MoveLeft />}
+              <span className="pl-4">Chats Archivados</span>
             </div>
-          }
-          {(view ? chatsVisible : chatsArchived).map(chat => (
+          )}
+
+          {/* Muestra la lista de chats: visibles o archivados según el estado 'view' */}
+          {(view ? chatsVisible : chatsArchived).map((chat) => (
             <ChatsListItem key={chat.id} chat={chat} />
           ))}
-          {
-            chatsArchived.length <= 0 && chatsVisible.length <= 0 && <div className='flex flex-col items-center justify-center w-full mt-6'>
-              <MessageCircleX/>
+
+          {/* Mensaje de estado cuando no hay chats disponibles */}
+          {chatsArchived.length <= 0 && chatsVisible.length <= 0 && (
+            <div className="flex flex-col items-center justify-center w-full mt-6">
+              <MessageCircleX />
               <p>No tienes chats aún.</p>
             </div>
-          }
+          )}
         </div>
-      }
+      )}
     </div>
-
   );
 }
 

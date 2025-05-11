@@ -2,7 +2,12 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEllipsisVertical,
+  faArrowRightFromBracket,
+  faChevronCircleLeft,
+  faChevronCircleRight,
+} from "@fortawesome/free-solid-svg-icons";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
@@ -21,9 +26,8 @@ import Configuration from "./Configuration";
 import { Switch } from "@/components/ui/switch";
 
 const SideNav = () => {
-  const [open, setOpen] = useState(false);
   const pathname = usePathname().split("/")[2];
-  const { logout, usersActive, users } = useAuth();
+  const { logout, openMenu: open, setOpenMenu: setOpen, users } = useAuth();
   const user = useSelector((state) => state.user);
   const router = useRouter();
   const [widthImg, setWidthImg] = useState("");
@@ -57,6 +61,18 @@ const SideNav = () => {
     setIsDark(!isDark);
   };
 
+  // Cambia el ancho del chat cuando el menu esta activo
+  useEffect(() => {
+    const chatElement = document.getElementById("chat");
+    if (chatElement) {
+      if (open) {
+        chatElement.classList.replace("w-100", "w-0");
+      } else {
+        chatElement.classList.replace("w-0", "w-100");
+      }
+    }
+  }, [open]);
+
   useEffect(() => {
     if (open) {
       setWidthImg("w-[6rem]");
@@ -72,8 +88,17 @@ const SideNav = () => {
   }
 
   return (
-    <div className={`duration-300 chat__sidebar w-[34rem]`} ref={navRef}>
-      <div className="flex justify-between pr-2 pt-2">
+    <div
+      className={`${
+        open ? "md:w-[34rem] w-full" : "w-0 md:w-[34rem] md:!p-[10px] !p-0"
+      } duration-300 chat__sidebar`}
+      ref={navRef}
+    >
+      <div
+        className={`flex justify-between pr-2 pt-2 ${
+          open ? "" : "invisible md:!visible"
+        }`}
+      >
         <Switch checked={isDark} onCheckedChange={toggleTheme} />
         <div className="flex w-[25%]">
           <div
@@ -116,7 +141,11 @@ const SideNav = () => {
           </div>
         </div>
       </div>
-      <div className={`flex flex-col gap-x-4 items-center duration-300 h-full`}>
+      <div
+        className={`flex flex-col gap-x-4 items-center duration-300 h-full ${
+          open ? "" : "invisible md:!visible"
+        }`}
+      >
         {/* <UserAvatar
           imageSrc={user?.image}
           width="w-[6rem]"

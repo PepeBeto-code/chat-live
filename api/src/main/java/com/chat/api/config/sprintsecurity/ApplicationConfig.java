@@ -20,20 +20,20 @@ import java.util.List;
 public class ApplicationConfig {
     private final UserRepository userRepository;
 
-    // 🛡️ Bean para la codificación de contraseñas (BCrypt)
+    // Bean para la codificación de contraseñas (BCrypt)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // 👤 Bean para obtener los detalles del usuario (usado en la autenticación)
+    // Bean para obtener los detalles del usuario (usado en la autenticación)
     @Bean
     public UserDetailsService userDetailsService() {
         return username ->
             userRepository.findByUsername(username)
                 .orElseThrow(()->new UsernameNotFoundException("User Not Found"));}
 
-    // 🔐 Bean que define el proveedor de autenticación (Authentication Provider)
+    // Bean que define el proveedor de autenticación (Authentication Provider)
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -42,7 +42,7 @@ public class ApplicationConfig {
         return authProvider;
     }
 
-    // 🏛️ Bean que gestiona la autenticación (Authentication Manager)
+    //  Bean que gestiona la autenticación (Authentication Manager)
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
