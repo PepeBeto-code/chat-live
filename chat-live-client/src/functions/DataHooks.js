@@ -59,7 +59,8 @@ export const DataHooks = (
     setChats,
     router,
     setIsLoading,
-    setChatsSubscribe
+    setChatsSubscribe,
+    setOpenMenu
   ) => {
     setIsLoading(true);
     try {
@@ -67,6 +68,8 @@ export const DataHooks = (
         senderId: senderId,
         receiverId: receiverId,
       });
+      console.log("chat", chat);
+      setOpenMenu(false);
       setChatsSubscribe((prevChats) => [...prevChats, chat]);
       setChats((prevChats) => [...prevChats, chat]);
       router.push(`/dashboard/chat/${chat.id}`, { shallow: true });

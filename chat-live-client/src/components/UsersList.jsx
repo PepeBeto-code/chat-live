@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Tooltip } from "reactstrap";
 import UserAvatar2 from "./UserAvatar2";
 import { Spinner } from "reactstrap";
+import { UncontrolledTooltip } from "reactstrap";
 
 const UsersList = ({ actives = false }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel(); // Configuración del carrusel
@@ -19,6 +20,7 @@ const UsersList = ({ actives = false }) => {
     isLoading,
     setChatsSubscribe,
     connectedRef,
+    setOpenMenu,
   } = useAuth();
   const dispatch = useDispatch();
   const { getOrCreateChat } = DataHooks(dispatch, connectedRef);
@@ -66,7 +68,8 @@ const UsersList = ({ actives = false }) => {
                     setChats,
                     router,
                     setIsLoading,
-                    setChatsSubscribe
+                    setChatsSubscribe,
+                    setOpenMenu
                   )
                 }
                 id={`tooltip-${user.id}`} // Asegurar ID único
@@ -86,13 +89,15 @@ const UsersList = ({ actives = false }) => {
                 >
                   {user.username}
                 </p>
-                <Tooltip
-                  isOpen={tooltipState[user.id] || false} // Estado para este tooltip
-                  target={`tooltip-${user.id}`} // Asociar al ID único
-                  toggle={() => toggleTooltip(user.id)} // Cambiar el estado del tooltip específico
-                >
-                  Enviar Mensaje a {user.username}
-                </Tooltip>
+                {document.getElementById(`tooltip-${user.id}`) && (
+                  <Tooltip
+                    isOpen={tooltipState[user.id] || false}
+                    target={`tooltip-${user.id}`}
+                    toggle={() => toggleTooltip(user.id)}
+                  >
+                    Enviar Mensaje a {user.username}
+                  </Tooltip>
+                )}
               </div>
             ))}
         {isLoading && (

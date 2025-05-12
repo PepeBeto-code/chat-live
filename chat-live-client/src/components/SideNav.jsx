@@ -146,14 +146,17 @@ const SideNav = () => {
           open ? "" : "invisible md:!visible"
         }`}
       >
-        {/* <UserAvatar
-          imageSrc={user?.image}
-          width="w-[6rem]"
-          height="h-[6rem]"
-        ></UserAvatar>
-        <p className="chat__username origin-left font-medium text-xl duration-300">
-          {user ? user.username : "Sin Usiario"}
-        </p> */}
+        <div className={`w-full md:hidden  ${open ? "visible" : ""}`}>
+          <p
+            style={{ color: "var(--text-secondary)" }}
+            className="w-full font-bold text-xl text-start"
+          >
+            Usuarios
+          </p>
+          <div className="w-full flex justify-center">
+            <UsersList></UsersList>
+          </div>
+        </div>
         {users?.some((u) => u.active && u.id != user.id) && (
           <p
             style={{ color: "var(--text-secondary)" }}
