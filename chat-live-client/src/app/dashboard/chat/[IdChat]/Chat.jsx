@@ -134,7 +134,7 @@ const Chat = () => {
           isOpen={isMenuOpen}
           onStateChange={handleStateChange}
           customBurgerIcon={false}
-          width={"30rem"}
+          className="md:!w-[30rem] !w-full"
         >
           <h2 tabIndex="-1" style={{ padding: "1.2em 0.8em" }}>
             {isSearch && "Buscar Mensajes"}
@@ -360,6 +360,7 @@ const Chat = () => {
         {/* Mostrar quién está escribiendo */}
         {typingUser && (
           <div
+            aria-live="polite"
             style={{
               color: "#999",
               fontStyle: "italic",

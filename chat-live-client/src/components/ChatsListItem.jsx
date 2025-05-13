@@ -85,6 +85,16 @@ export default function ChatsListItem({ chat, children }) {
   return (
     <div
       className="chat-list__item"
+      role="link"
+      tabIndex={0}
+      aria-label={`Abrir chat con ${chat.name}`}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          setOpenMenu(false);
+          router.push(`/dashboard/chat/${chat.id}`, { shallow: true });
+        }
+      }}
       onMouseEnter={() => setIsVisible(true)}
       onMouseLeave={() => setIsVisible(false)}
       onClick={() => {

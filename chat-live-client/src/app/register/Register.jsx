@@ -14,6 +14,7 @@ const Register = () => {
   // Estados para manejar errores globales y específicos por campo
   const [error, setError] = useState("");
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
@@ -25,7 +26,7 @@ const Register = () => {
     }
   }, [token]); // Se ejecuta solo cuando cambia `tokenDate`
 
-  const { login } = DataHooks();
+  const { login, isLoading } = DataHooks();
 
   // Maneja los cambios en los inputs del formulario
   const onChange = (e) => {
@@ -77,143 +78,128 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
-        <h2 className="text-center text-3xl font-extrabold text-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-white to-purple-100 px-4">
+      <div className="w-full max-w-md p-8 bg-white/80 backdrop-blur rounded-2xl shadow-xl">
+        <h2 className="text-center text-3xl font-bold text-gray-900">
           Crear Cuenta
         </h2>
+        <p className="text-center text-sm text-gray-500 mb-4">
+          Regístrate para acceder al chat
+        </p>
+
         {error && (
           <div
             role="alert"
-            className="p-3 text-center text-red-600 border border-red-600 rounded"
+            className="p-3 mb-2 text-sm text-red-600 border border-red-500 rounded-md bg-red-50 text-center"
           >
             {error}
           </div>
         )}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="mb-4">
+
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          {/* Username */}
+          <div>
             <label
               htmlFor="name"
               className="block text-sm font-medium text-gray-700"
             >
-              Nombre Completo
+              Nombre de usuario
             </label>
             <input
               id="username"
-              name="username"
               type="text"
+              name="username"
               required
               onChange={onChange}
               aria-invalid={!!errors.username}
               aria-errormessage={errors.username ? "username-error" : undefined}
-              className="mt-1 block w-full  text-black px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Tu nombre"
+              className="mt-1 w-full text-black px-4 py-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
             {errors.username && (
-              <h6 id="username-error" className={"custom-error text-danger"}>
+              <p id="username-error" className="text-sm text-red-500 mt-1">
                 {errors.username}
-              </h6>
+              </p>
             )}
           </div>
 
-          {/* <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Correo Electrónico
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              onChange={onChange}
-              className="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="correo@ejemplo.com"
-            />
-          </div> */}
-
-          <div className="mb-4">
+          {/* Password */}
+          <div>
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-700"
             >
               Contraseña
             </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              aria-invalid={!!errors.password}
-              aria-errormessage={errors.password ? "password-error" : undefined}
-              required
-              onChange={onChange}
-              className="mt-1 block  text-black w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="********"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                required
+                onChange={onChange}
+                placeholder="••••••••"
+                className="mt-1 w-full text-black px-4 py-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-gray-500 text-sm focus:outline-none"
+              >
+                {showPassword ? "Ocultar" : "Mostrar"}
+              </button>
+            </div>
             {errors.password && (
-              <h6 id="password-error" className={"custom-error text-danger"}>
+              <p id="password-error" className="text-sm text-red-500 mt-1">
                 {errors.password}
-              </h6>
+              </p>
             )}
           </div>
 
-          <div className="mb-4">
-            <label
-              htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Confirmar Contraseña
-            </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              required
-              onChange={onChange}
-              className="mt-1 block  text-black w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="********"
-            />
-          </div>
-
-          {/* <div className="mb-4">
-            <label
-              htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Codigo de invitacion
-            </label>
-            <input
-              id="invitationCode"
-              name="invitationCode"
-              type="text"
-              required
-              onChange={onChange}
-              className="mt-1 block  text-black w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="aDfrhYTH"
-            />
-            {errors.invitationCode && (
-              <h6 className={"custom-error text-danger"}>
-                {errors.invitationCode}
-              </h6>
-            )}
-          </div> */}
-
+          {/* Confirm Password */}
           <div>
-            <button
-              type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 transition duration-200"
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-gray-700"
             >
-              Registrarse
-            </button>
+              Confirmar contraseña
+            </label>
+            <input
+              type="password"
+              name="confirmPassword"
+              required
+              onChange={onChange}
+              placeholder="••••••••"
+              className="mt-1 w-full text-black px-4 py-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
           </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            aria-busy={isLoading}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-xl transition duration-200"
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <Spinner size="sm" /> Cargando...
+              </div>
+            ) : (
+              "Registrarse"
+            )}
+          </button>
         </form>
-        <p className="mt-4 text-center text-sm text-gray-600">
-          ¿Ya tienes una cuenta?{" "}
-          <Link href="/login">
-            <span className="font-medium text-blue-600 hover:text-blue-500 cursor-pointer">
-              Inicia sesión
-            </span>
+
+        <div className="mt-6 text-center text-sm text-gray-600">
+          ¿Ya tienes cuenta?{" "}
+          <Link href="/login" className="text-blue-600 hover:underline">
+            Inicia sesión
           </Link>
-        </p>
+        </div>
+
+        <div className="absolute bottom-4 right-0 w-full text-center  text-xs text-gray-500">
+          <p>Hecho con amor por Pepe Miñón</p>
+        </div>
       </div>
     </div>
   );

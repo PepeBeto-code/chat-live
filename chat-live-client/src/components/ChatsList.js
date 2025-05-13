@@ -54,20 +54,34 @@ function ChatsList() {
             <div
               className="chat-list__item bg-transparent !justify-start"
               onClick={() => setView(!view)}
+              aria-pressed={!view}
+              aria-label={
+                view ? "Ver chats archivados" : "Volver a chats activos"
+              }
             >
-              {view ? <ArchiveRestore /> : <MoveLeft />}
+              {view ? (
+                <ArchiveRestore aria-hidden="true" />
+              ) : (
+                <MoveLeft aria-hidden="true" />
+              )}
               <span className="pl-4">Chats Archivados</span>
             </div>
           )}
 
           {/* Muestra la lista de chats: visibles o archivados según el estado 'view' */}
-          {(view ? chatsVisible : chatsArchived).map((chat) => (
-            <ChatsListItem key={chat.id} chat={chat} />
-          ))}
+          <div role="list" aria-live="polite" aria-label="Lista de chats">
+            {(view ? chatsVisible : chatsArchived).map((chat) => (
+              <ChatsListItem key={chat.id} chat={chat} />
+            ))}
+          </div>
 
           {/* Mensaje de estado cuando no hay chats disponibles */}
           {chatsArchived.length <= 0 && chatsVisible.length <= 0 && (
-            <div className="flex flex-col items-center justify-center w-full mt-6">
+            <div
+              role="status"
+              aria-live="polite"
+              className="flex flex-col items-center justify-center w-full mt-6"
+            >
               <MessageCircleX />
               <p>No tienes chats aún.</p>
             </div>

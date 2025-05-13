@@ -1,9 +1,24 @@
 import DataHooks from "@/functions/DataHooks";
 
+/**
+ * Gestor de notificaciones push para suscribirse a Web Push Notifications.
+ *
+ * @param {Function} dispatch - Función dispatch de Redux para usar con DataHooks.
+ * @param {React.MutableRefObject<boolean>} connectedRef - Referencia al estado de conexión WebSocket.
+ * @returns {{
+ *   checkNotificationPermission: () => Promise<void>
+ * }} Funciones públicas para gestionar permisos y suscripción.
+ */
 function pushNotificationManager(dispatch, connectedRef) {
   const PUBLIC_VAPID_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "";
   const { fetcherPost } = DataHooks(dispatch, connectedRef);
 
+  /**
+   * Convierte una clave VAPID en base64 a un Uint8Array.
+   *
+   * @param {string} base64String - Clave VAPID en base64.
+   * @returns {Uint8Array} Clave decodificada como Uint8Array.
+   */
   function urlB64ToUint8Array(base64String) {
     const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding)
@@ -19,6 +34,12 @@ function pushNotificationManager(dispatch, connectedRef) {
     return uint8Array;
   }
 
+  /**
+   * Codifica un Uint8Array en base64.
+   *
+   * @param {Uint8Array} array - Arreglo de bytes.
+   * @returns {string} Cadena en base64.
+   */
   function encodeUint8Array(array) {
     const binaryString = Array.from(array)
       .map((byte) => String.fromCharCode(byte))
@@ -26,6 +47,14 @@ function pushNotificationManager(dispatch, connectedRef) {
     return btoa(binaryString);
   }
 
+  /**
+   * Suscribe al usuario al servicio de notificaciones push.
+   *
+   * - Si ya existe una suscripción, se elimina y se crea una nueva.
+   * - Envía la suscripción al backend para su almacenamiento.
+   *
+   * @returns {Promise<void>}
+   */
   async function subscribeToPush() {
     const registration = await navigator.serviceWorker.ready;
 
@@ -64,6 +93,14 @@ function pushNotificationManager(dispatch, connectedRef) {
     }
   }
 
+  /**
+   * Verifica el permiso de notificaciones y solicita suscripción si es necesario.
+   *
+   * - Si ya está concedido, suscribe directamente.
+   * - Si no está denegado, solicita permiso y suscribe si es aceptado.
+   *
+   * @returns {Promise<void>}
+   */
   async function checkNotificationPermission() {
     if (Notification.permission === "granted") {
       await subscribeToPush();

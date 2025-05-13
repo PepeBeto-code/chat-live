@@ -148,6 +148,9 @@ const ChatMessage = ({
 
   return (
     <div
+      role="article"
+      aria-label={`Mensaje de ${isSentByUser ? "tú" : userReceivername}`}
+      tabIndex={0}
       ref={(el) => (messageRefs.current[msg.id] = el)}
       className={`chat__message ${
         isSentByUser ? "chat__message--sent" : "chat__message--received"
@@ -159,6 +162,9 @@ const ChatMessage = ({
         }`}
         onMouseEnter={() => setIsVisibleMs(true)}
         onMouseLeave={() => setIsVisibleMs(false)}
+        onFocus={() => setIsVisibleMs(true)}
+        onBlur={() => setIsVisibleMs(false)}
+        tabIndex={0}
       >
         {repliedMessage && (
           <RepliedMessage
@@ -201,23 +207,37 @@ const ChatMessage = ({
         </div>
       )}
       {/* Modal de eliminación de mensaje */}
-      <Modal isOpen={modal} toggle={toggle} centered>
-        <ModalHeader toggle={toggle} className="font-bold text-xl">
+      <Modal
+        isOpen={modal}
+        toggle={toggle}
+        centered
+        role="dialog"
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <ModalHeader
+          toggle={toggle}
+          className="font-bold text-xl"
+          id="modal-title"
+        >
           {deleteForAll
             ? "¿Para quién quieres anular el envío de este mensaje?"
             : "Eliminar para mí"}
         </ModalHeader>
-        <ModalBody>
+        <ModalBody id="modal-description">
           {deleteForAll ? (
             <Col sm={10}>
               <FormGroup check>
                 <Input
+                  id="deleteAll"
                   name="radio2"
                   type="radio"
                   checked={deletedAll}
                   onChange={() => setDeletedAll(true)}
                 />{" "}
-                <Label check>Anular el envío para todos</Label>
+                <Label htmlFor="deleteAll" check>
+                  Anular el envío para todos
+                </Label>
                 <p
                   style={{
                     color: "rgb(107 114 128 / var(--tw-text-opacity, 1))",
@@ -232,12 +252,15 @@ const ChatMessage = ({
               </FormGroup>
               <FormGroup check>
                 <Input
+                  id="deleteMe"
                   name="radio2"
                   type="radio"
                   checked={!deletedAll}
                   onChange={() => setDeletedAll(false)}
                 />{" "}
-                <Label check>Anular el envío para ti</Label>
+                <Label htmlFor="deleteMe" check>
+                  Anular el envío para ti
+                </Label>
                 <p
                   style={{
                     color: "rgb(107 114 128 / var(--tw-text-opacity, 1))",
@@ -287,6 +310,14 @@ const RepliedMessage = ({
   <div
     className="chat__replied-message cursor-pointer"
     onClick={() => highlightAndScrollToMessage(repliedMessage.id)}
+    tabIndex={0}
+    role="button"
+    aria-label={`Ver mensaje al que respondes: "${repliedMessage.content}"`}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        highlightAndScrollToMessage(repliedMessage.id);
+      }
+    }}
   >
     <p className="chat__replied-text">
       <strong>
@@ -321,6 +352,8 @@ const MessageContent = ({
     {edit ? (
       <div className="flex items-center space-x-2">
         <input
+          aria-label="Editar mensaje"
+          placeholder="Editar mensaje"
           value={editedContent}
           onChange={(e) => setEditedContent(e.target.value)}
           className="focus:outline-none"
@@ -329,13 +362,22 @@ const MessageContent = ({
           }}
           autoFocus
         />
-        <Check className="cursor-pointer" onClick={() => editMessage()} />
+        <Check
+          className="cursor-pointer"
+          role="button"
+          aria-label="Guardar edición"
+          title="Guardar edición"
+          onClick={() => editMessage()}
+        />
         <X
           className="cursor-pointer"
           onClick={() => {
             setEditedContent(msg.content);
             setEdit(false);
           }}
+          role="button"
+          aria-label="Cancelar edición"
+          title="Cancelar edición"
         />
       </div>
     ) : (
@@ -349,6 +391,9 @@ const MessageContent = ({
         {msg.status == "FAILED" ? (
           <div id="TooltipErr">
             <CircleX
+              aria-describedby={`TooltipText-${msg.id}`}
+              aria-label="Error al enviar"
+              role="img"
               style={{
                 color: "var(--notification-color)",
               }}
@@ -357,8 +402,9 @@ const MessageContent = ({
               isOpen={tooltipErr}
               target={"TooltipErr"}
               toggle={() => setTooltipErr(!tooltipErr)}
+              id="tooltip-error"
             >
-              Error al enviar
+              <span id={`TooltipText-${msg.id}`}>Error al enviar</span>
             </Tooltip>
           </div>
         ) : msg.id ? (
