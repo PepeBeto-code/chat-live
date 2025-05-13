@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
   const tokenDate = useSelector((state) => state.token);
   const userLoguer = useSelector((state) => state.user);
   const colors = useSelector((state) => state.colors);
-  const subscribersRef = useRef({}); // Almacena callbacks y suscripciones por canal
   const chatsRef = useRef([]); // Versión mutable de chats
   const [loading, setLoading] = useState(true);
   const [openMenu, setOpenMenu] = useState(false);
